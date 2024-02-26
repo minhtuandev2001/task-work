@@ -68,16 +68,13 @@ const detail = async (req, res) => {
 }
 
 // [PATCH] /api/tasks/change-status/:id
-
 const changeStatus = async (req, res) => {
   try {
     const id = req.params.id
     const status = req.body.status
-    console.log(id, status)
     // kiểm tra tồn tại của task 
     const checktask = await Task.findOne({ _id: id });
     if (!checktask) {
-      console.log('task not found')
       res.json({
         code: 404,
         message: "Không tìm thấy task này!"
@@ -94,11 +91,38 @@ const changeStatus = async (req, res) => {
       code: 500,
       message: "Cập nhật trạng thái thất bại!"
     })
-    console.log("thay đổi status thất bại", error)
+  }
+}
+
+// [PATCH] /api/tasks/change-multi
+const changeMultiStatus = async (req, res) => {
+  try {
+    const { ids, key, value } = req.body
+    switch (key) {
+      case 'status':
+        await Task.updateMany({ _id: { $in: ids } }, { status: value });
+        res.json({
+          code: 200,
+          message: "Cập nhật trạng thái thành công!"
+        })
+        break;
+      default:
+        res.json({
+          code: 400,
+          message: "không tồn tại!"
+        })
+        break;
+    }
+  } catch (error) {
+    res.json({
+      code: 500,
+      message: "Cập nhật thất bại!"
+    })
   }
 }
 module.exports = {
   index,
   detail,
-  changeStatus
+  changeStatus,
+  changeMultiStatus
 }
