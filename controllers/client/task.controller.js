@@ -67,7 +67,7 @@ const detail = async (req, res) => {
   }
 }
 
-// [PATCH] /api/tasks/change-status/:id
+// [PATCH] /api/v1/tasks/change-status/:id
 const changeStatus = async (req, res) => {
   try {
     const id = req.params.id
@@ -94,7 +94,7 @@ const changeStatus = async (req, res) => {
   }
 }
 
-// [PATCH] /api/tasks/change-multi
+// [PATCH] /api/v1/tasks/change-multi
 const changeMultiStatus = async (req, res) => {
   try {
     const { ids, key, value } = req.body
@@ -120,9 +120,29 @@ const changeMultiStatus = async (req, res) => {
     })
   }
 }
+
+// [POST] /api/v1/task/create
+const create = async (req, res) => {
+  try {
+    console.log(req.body)
+    const task = new Task(req.body)
+    await task.save()
+    res.json({
+      code: 200,
+      message: "Tạo thành công!",
+      data: task
+    })
+  } catch (error) {
+    res.json({
+      code: 500,
+      message: "Tạo task không thành công!"
+    })
+  }
+}
 module.exports = {
   index,
   detail,
   changeStatus,
-  changeMultiStatus
+  changeMultiStatus,
+  create
 }

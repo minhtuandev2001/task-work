@@ -11,4 +11,7 @@ router.patch('/change-status/:id', taskController.changeStatus)
 
 router.patch('/change-multi', taskController.changeMultiStatus)
 
+router.post('/create', taskController.create)
+
+
 module.exports = router
