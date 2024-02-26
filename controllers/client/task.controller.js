@@ -1,22 +1,44 @@
 const Task = require("../../model/task.model")
 
+// helper 
+const paginationHelper = require("../../utils/pagination")
+
 // [GET] /api/v1/tasks
 const index = async (req, res) => {
   try {
     const find = {
       deleted: false
     }
+    // FILTER
     if (req.query.status) {
       find.status = req.query.status
     }
+    // END FILTER
+
+    // SORT
     let sort = {};
     if (req.query.sortKey && req.query.sortValue) {
       sort[req.query.sortKey] = req.query.sortValue;
-
-      console.log(sort)
     }
-    const tasks = await Task.find(find).sort(sort)
-    res.json(tasks)
+    // END SORT
+
+    // PAGINATION
+    const countDocumentsTask = await Task.find({ deleted: false }).countDocuments()
+    let objectPagination = paginationHelper.pagination({
+      limit: 2,
+      currentPage: 1
+    }, req.query, countDocumentsTask)
+    // END PAGINATION
+    let data = {};
+    const tasks = await Task.find(find)
+      .sort(sort)
+      .limit(objectPagination.limit)
+      .skip(objectPagination.skip)
+
+    data.tasks = tasks;
+    data.objectPagination = objectPagination;
+
+    res.json(data)
   } catch (error) {
     console.log(error)
     res.redirect("/api/v1/")
