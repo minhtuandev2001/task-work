@@ -29,6 +29,13 @@ const index = async (req, res) => {
       currentPage: 1
     }, req.query, countDocumentsTask)
     // END PAGINATION
+
+    // SEARCH
+    if (req.query.keyword) {
+      find.content = new RegExp(req.query.keyword, "i")
+    }
+    // END SEARCH
+
     let data = {};
     const tasks = await Task.find(find)
       .sort(sort)
