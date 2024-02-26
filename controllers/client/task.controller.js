@@ -165,11 +165,37 @@ const edit = async (req, res) => {
   }
 }
 
+// [POST] /api/v1/task/delete/:id
+const deleteTask = async (req, res) => {
+  try {
+    const id = req.params.id;
+    // checks tồn tại của task
+    const checktask = await Task.findOne({ _id: id })
+    if (!checktask) {
+      res.json({
+        code: 400,
+        message: "Không tồn tại task này!"
+      })
+      return
+    }
+    await Task.updateOne({ _id: id }, { deleted: true, deletedAt: Date.now() })
+    res.json({
+      code: 200,
+      message: "Đã xóa task"
+    })
+  } catch (error) {
+    res.json({
+      code: 500,
+      message: "Cập nhật task thất bại!"
+    })
+  }
+}
 module.exports = {
   index,
   detail,
   changeStatus,
   changeMultiStatus,
   create,
-  edit
+  edit,
+  deleteTask
 }
