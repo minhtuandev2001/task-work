@@ -124,7 +124,6 @@ const changeMultiStatus = async (req, res) => {
 // [POST] /api/v1/task/create
 const create = async (req, res) => {
   try {
-    console.log(req.body)
     const task = new Task(req.body)
     await task.save()
     res.json({
@@ -139,10 +138,38 @@ const create = async (req, res) => {
     })
   }
 }
+
+// [PATCH] /api/v1/task/edit/:id
+const edit = async (req, res) => {
+  try {
+    const id = req.params.id;
+    // checks task tồn tại không 
+    const checktask = await Task.findOne({ _id: id });
+    if (!checktask) {
+      res.json({
+        code: 400,
+        message: "Task không tồn tại"
+      })
+      return
+    }
+    await Task.updateOne({ _id: id }, req.body)
+    res.json({
+      code: 200,
+      message: "Cập nhật task thành công!"
+    })
+  } catch (error) {
+    res.json({
+      code: 500,
+      message: "Cập nhật task thất bại!"
+    })
+  }
+}
+
 module.exports = {
   index,
   detail,
   changeStatus,
   changeMultiStatus,
-  create
+  create,
+  edit
 }
