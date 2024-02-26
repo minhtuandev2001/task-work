@@ -67,7 +67,38 @@ const detail = async (req, res) => {
   }
 }
 
+// [PATCH] /api/tasks/change-status/:id
+
+const changeStatus = async (req, res) => {
+  try {
+    const id = req.params.id
+    const status = req.body.status
+    console.log(id, status)
+    // kiểm tra tồn tại của task 
+    const checktask = await Task.findOne({ _id: id });
+    if (!checktask) {
+      console.log('task not found')
+      res.json({
+        code: 404,
+        message: "Không tìm thấy task này!"
+      })
+      return
+    }
+    await Task.updateOne({ _id: id }, { status: status })
+    res.json({
+      code: 200,
+      message: "Cập nhật trạng thái thành công!"
+    })
+  } catch (error) {
+    res.json({
+      code: 500,
+      message: "Cập nhật trạng thái thất bại!"
+    })
+    console.log("thay đổi status thất bại", error)
+  }
+}
 module.exports = {
   index,
-  detail
+  detail,
+  changeStatus
 }
