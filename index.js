@@ -1,6 +1,7 @@
 const express = require("express");
 require('dotenv').config()
 const cookieParser = require('cookie-parser')
+const cors = require('cors')
 
 const connectDB = require("./config/db");
 
@@ -15,6 +16,7 @@ connectDB();
 app.use(express.json())
 app.use(express.urlencoded())
 app.use(cookieParser())
+app.use(cors())
 
 // Routes version 1
 route(app)
