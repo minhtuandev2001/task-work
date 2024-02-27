@@ -52,7 +52,7 @@ const index = async (req, res) => {
   }
 }
 
-// [GET] /api/v1/tasks/:id
+// [GET] /api/v1/tasks/detail/:id
 const detail = async (req, res) => {
   try {
     const id = req.params.id
@@ -60,10 +60,19 @@ const detail = async (req, res) => {
       _id: id,
       deleted: false
     })
+    if (!task) {
+      res.json({
+        code: 400,
+        message: "Task không tồn tại"
+      })
+      return
+    }
     res.json(task)
   } catch (error) {
-    console.log(error)
-    res.redirect("/api/v1/tasks")
+    res.json({
+      code: 400,
+      message: "không có task này!"
+    })
   }
 }
 
@@ -73,7 +82,7 @@ const changeStatus = async (req, res) => {
     const id = req.params.id
     const status = req.body.status
     // kiểm tra tồn tại của task 
-    const checktask = await Task.findOne({ _id: id });
+    const checktask = await Task.findOne({ _id: id, deleted: false });
     if (!checktask) {
       res.json({
         code: 404,
@@ -95,7 +104,7 @@ const changeStatus = async (req, res) => {
 }
 
 // [PATCH] /api/v1/tasks/change-multi
-const changeMultiStatus = async (req, res) => {
+const changeMulti = async (req, res) => {
   try {
     const { ids, key, value } = req.body
     switch (key) {
@@ -151,7 +160,7 @@ const edit = async (req, res) => {
   try {
     const id = req.params.id;
     // checks task tồn tại không 
-    const checktask = await Task.findOne({ _id: id });
+    const checktask = await Task.findOne({ _id: id, deleted: false });
     if (!checktask) {
       res.json({
         code: 400,
@@ -177,7 +186,7 @@ const deleteTask = async (req, res) => {
   try {
     const id = req.params.id;
     // checks tồn tại của task
-    const checktask = await Task.findOne({ _id: id })
+    const checktask = await Task.findOne({ _id: id, deleted: false })
     if (!checktask) {
       res.json({
         code: 400,
@@ -201,7 +210,7 @@ module.exports = {
   index,
   detail,
   changeStatus,
-  changeMultiStatus,
+  changeMulti,
   create,
   edit,
   deleteTask
