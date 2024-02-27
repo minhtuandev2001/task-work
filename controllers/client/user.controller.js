@@ -42,6 +42,41 @@ const register = async (req, res) => {
   }
 }
 
+// [POST] /api/v1/user/login
+const login = async (req, res) => {
+  try {
+    const email = req.body.email;
+    const password = md5(req.body.password);
+
+    const user = await User.findOne({ email: email, deleted: false })
+    if (!user) {
+      res.json({
+        code: 400,
+        message: "Tài khoản này không tồn tại!"
+      })
+      return
+    }
+    if (password !== user.password) {
+      res.json({
+        code: 400,
+        message: "Mật khẩu không đúng!"
+      })
+      return
+    }
+    res.cookie("token", user.token)
+    res.json({
+      code: 200,
+      message: "Đăng nhập thành công!",
+      token: user.token
+    })
+  } catch (error) {
+    res.json({
+      code: 500,
+      message: "Đăng nhập thất bại!"
+    })
+  }
+}
 module.exports = {
-  register
+  register,
+  login
 }
