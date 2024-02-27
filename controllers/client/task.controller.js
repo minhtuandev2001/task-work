@@ -6,7 +6,12 @@ const paginationHelper = require("../../utils/pagination")
 // [GET] /api/v1/tasks
 const index = async (req, res) => {
   try {
+    const idUser = req.user.id;
     const find = {
+      $or: [
+        { createdBy: idUser },
+        { listUser: idUser }
+      ],
       deleted: false
     }
     // FILTER
