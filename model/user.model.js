@@ -5,10 +5,7 @@ const userSchema = mongoose.Schema({
   fullName: { type: String },
   email: { type: String },
   password: { type: String },
-  token: {
-    type: String,
-    default: generate.generateRandomString(20)
-  },
+  token: { type: String, },
   status: { type: String, default: "active" },
   deleted: { type: Boolean, default: false },
   deletedAt: { type: Date }

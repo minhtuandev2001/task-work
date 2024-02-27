@@ -27,6 +27,9 @@ const register = async (req, res) => {
     }
     // hash mật khẩu trước khi lưu vào db
     req.body.password = md5(req.body.password)
+    // tạo token cho user
+    req.body.token = generate.generateRandomString(20)
+
     const user = new User(req.body);
     await user.save()
 

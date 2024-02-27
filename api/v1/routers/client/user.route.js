@@ -3,6 +3,7 @@ const router = express.Router();
 
 const userController = require("../../../../controllers/client/user.controller")
 const userValidate = require("../../../../validates/client/user.validate")
+const authMiddleware = require("../../../../middleware/client/auth.middleware")
 
 router.post(
   "/register",
@@ -31,6 +32,7 @@ router.post(
 
 router.get(
   "/detail/:id",
+  authMiddleware.requireAuth,
   userController.detail);
 
 module.exports = router;
