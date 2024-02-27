@@ -171,10 +171,36 @@ const resetPassword = async (req, res) => {
     })
   }
 }
+
+// [GET] /api/v1/user/detail/:id
+const detail = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findOne({ _id: id, deleted: false }).select("-password -token");
+    if (!user) {
+      res.json({
+        code: 400,
+        message: "Người dùng không tồn tại!"
+      })
+      retrun
+    }
+    res.json({
+      code: 200,
+      message: "Truy cập thông tin người dùng thành công",
+      data: user
+    })
+  } catch (error) {
+    res.json({
+      code: 500,
+      message: "Lỗi khi truy cập thông tin người dùng"
+    })
+  }
+}
 module.exports = {
   register,
   login,
   forgotPassword,
   otpPassword,
-  resetPassword
+  resetPassword,
+  detail
 }
