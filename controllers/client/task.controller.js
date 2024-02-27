@@ -140,6 +140,7 @@ const changeMulti = async (req, res) => {
 // [POST] /api/v1/task/create
 const create = async (req, res) => {
   try {
+    req.body.createdBy = req.user.id
     const task = new Task(req.body)
     await task.save()
     res.json({
