@@ -146,6 +146,16 @@ const changeMulti = async (req, res) => {
 const create = async (req, res) => {
   try {
     req.body.createdBy = req.user.id
+    if (req.body.taskParentId) {
+      const existTaskParent = await Task.findOne({ _id: req.body.taskParentId });
+      if (!existTaskParent) {
+        res.json({
+          code: 400,
+          message: "Task cha không tồn tại"
+        })
+        return
+      }
+    }
     const task = new Task(req.body)
     await task.save()
     res.json({
